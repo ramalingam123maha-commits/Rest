@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Rest API</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Welcome Back</h1>
+            <p class="subtitle">Sign in to your account</p>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="you@example.com" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input-group">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Enter your password" 
+                            required
+                        >
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                            <span class="eye-icon">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember" id="remember">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="login-btn">Sign In</button>
+            </form>
+
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn google-btn" onclick="handleSocialLogin('google')">
+                    <span class="icon">G</span>
+                    Google
+                </button>
+                <button class="social-btn github-btn" onclick="handleSocialLogin('github')">
+                    <span class="icon">⚡</span>
+                    GitHub
+                </button>
+            </div>
+
+            <p class="signup-link">
+                Don't have an account? <a href="#signup">Sign up here</a>
+            </p>
+        </div>
+
+        <div class="login-side">
+            <div class="side-content">
+                <h2>REST API Portal</h2>
+                <p>Secure access to your REST API endpoints and resources</p>
+                <ul class="features">
+                    <li>✓ Fast & Reliable</li>
+                    <li>✓ Highly Secure</li>
+                    <li>✓ Easy Integration</li>
+                    <li>✓ 24/7 Support</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="successMessage" class="message success-message" style="display: none;">
+        <span class="close" onclick="closeMessage()">&times;</span>
+        <p id="successText"></p>
+    </div>
+
+    <div id="errorMessage" class="message error-message" style="display: none;">
+        <span class="close" onclick="closeMessage()">&times;</span>
+        <p id="errorText"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
