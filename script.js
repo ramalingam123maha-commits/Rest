@@ -1,139 +1,145 @@
-// Toggle password visibility
-function togglePasswordVisibility() {
-    const passwordInput = document.getElementById('password');
-    const toggleBtn = document.querySelector('.toggle-password');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleBtn.innerHTML = '<span class="eye-icon">👁️‍🗨️</span>';
+// Task Manager Script
+let tasks = [];
+let filter = 'all';
+const listEl = document.getElementById('task-list');
+const inputEl = document.getElementById('new-task-input');
+const addBtn = document.getElementById('add-task-btn');
+const filters = document.querySelectorAll('.filter-btn');
+const counterEl = document.getElementById('task-counter');
+const themeToggle = document.getElementById('theme-toggle');
+
+// Load from localStorage
+function load() {
+  const stored = localStorage.getItem('tasks');
+  tasks = stored ? JSON.parse(stored) : [];
+  const theme = localStorage.getItem('theme');
+  if (theme === 'dark') document.body.classList.add('dark');
+}
+
+function save() {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function render() {
+  listEl.innerHTML = '';
+  const filtered = tasks.filter(t => {
+    if (filter === 'active') return !t.completed;
+    if (filter === 'completed') return t.completed;
+    return true;
+  });
+
+  filtered.forEach(t => {
+    const li = document.createElement('li');
+    li.className = 'task-card' + (t.completed ? ' completed' : '');
+    li.draggable = true;
+    li.dataset.id = t.id;
+
+    const chk = document.createElement('input');
+    chk.type = 'checkbox';
+    chk.checked = t.completed;
+    chk.addEventListener('change', () => toggleComplete(t.id));
+
+    const span = document.createElement('span');
+    span.textContent = t.text;
+
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.className = 'delete';
+    del.addEventListener('click', () => deleteTask(t.id));
+
+    li.append(chk, span, del);
+    listEl.appendChild(li);
+
+    // Drag events
+    li.addEventListener('dragstart', () => li.classList.add('dragging'));
+    li.addEventListener('dragend', () => li.classList.remove('dragging'));
+  });
+
+  // Drag over container
+  listEl.addEventListener('dragover', e => {
+    e.preventDefault();
+    const dragging = document.querySelector('.dragging');
+    const after = getDragAfter(e.clientY);
+    if (after == null) listEl.appendChild(dragging);
+    else listEl.insertBefore(dragging, after);
+  });
+
+  updateOrder();
+  updateCounter();
+}
+
+function getDragAfter(y) {
+  const items = [...listEl.querySelectorAll('.task-card:not(.dragging)')];
+  return items.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) {
+      return { offset, element: child };
     } else {
-        passwordInput.type = 'password';
-        toggleBtn.innerHTML = '<span class="eye-icon">👁️</span>';
+      return closest;
     }
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-// Validate email format
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+function updateOrder() {
+  const newOrder = [];
+  listEl.querySelectorAll('.task-card').forEach(li => {
+    const id = li.dataset.id;
+    const task = tasks.find(t => t.id === id);
+    if (task) newOrder.push(task);
+  });
+  tasks = newOrder;
+  save();
 }
 
-// Show success message
-function showSuccess(message) {
-    const successDiv = document.getElementById('successMessage');
-    const successText = document.getElementById('successText');
-    successText.textContent = message;
-    successDiv.style.display = 'flex';
-    setTimeout(() => {
-        successDiv.style.display = 'none';
-    }, 4000);
+function addTask() {
+  const text = inputEl.value.trim();
+  if (!text) return;
+  tasks.push({ id: Date.now().toString(), text, completed: false });
+  inputEl.value = '';
+  save();
+  render();
 }
 
-// Show error message
-function showError(message) {
-    const errorDiv = document.getElementById('errorMessage');
-    const errorText = document.getElementById('errorText');
-    errorText.textContent = message;
-    errorDiv.style.display = 'flex';
-    setTimeout(() => {
-        errorDiv.style.display = 'none';
-    }, 4000);
+function deleteTask(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  save();
+  render();
 }
 
-// Close message
-function closeMessage() {
-    document.getElementById('successMessage').style.display = 'none';
-    document.getElementById('errorMessage').style.display = 'none';
+function toggleComplete(id) {
+  tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+  save();
+  render();
 }
 
-// Handle form submission
-function handleLogin(event) {
-    event.preventDefault();
-    
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const rememberMe = document.getElementById('remember').checked;
-    
-    // Validation
-    if (!email) {
-        showError('Please enter your email address');
-        return;
-    }
-    
-    if (!isValidEmail(email)) {
-        showError('Please enter a valid email address');
-        return;
-    }
-    
-    if (!password) {
-        showError('Please enter your password');
-        return;
-    }
-    
-    if (password.length < 6) {
-        showError('Password must be at least 6 characters long');
-        return;
-    }
-    
-    // Simulate login API call
-    const loginBtn = event.target.querySelector('.login-btn');
-    const originalText = loginBtn.textContent;
-    loginBtn.textContent = 'Signing in...';
-    loginBtn.disabled = true;
-    
-    setTimeout(() => {
-        // Demo: Simple validation (in real app, call backend API)
-        if (email === 'demo@example.com' && password === 'password123') {
-            showSuccess('Login successful! Redirecting...');
-            
-            // Save remember me preference
-            if (rememberMe) {
-                localStorage.setItem('rememberEmail', email);
-            } else {
-                localStorage.removeItem('rememberEmail');
-            }
-            
-            // Simulate redirect
-            setTimeout(() => {
-                window.location.href = '/dashboard'; // Change to your dashboard URL
-            }, 1500);
-        } else {
-            showError('Invalid email or password');
-            loginBtn.textContent = originalText;
-            loginBtn.disabled = false;
-        }
-    }, 1500);
+function updateCounter() {
+  const left = tasks.filter(t => !t.completed).length;
+  counterEl.textContent = `${left} task${left !== 1 ? 's' : ''} left`;
 }
 
-// Handle social login
-function handleSocialLogin(provider) {
-    showSuccess(`Signing in with ${provider.charAt(0).toUpperCase() + provider.slice(1)}...`);
-    console.log(`Social login with ${provider} initiated`);
-    
-    // In a real application, this would redirect to the OAuth provider
-    // For demo purposes, we just show a message
-    setTimeout(() => {
-        showSuccess(`${provider} login would redirect here`);
-    }, 1500);
-}
-
-// Load remembered email on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const rememberEmail = localStorage.getItem('rememberEmail');
-    if (rememberEmail) {
-        document.getElementById('email').value = rememberEmail;
-        document.getElementById('remember').checked = true;
-    }
-    
-    // Demo credentials hint
-    console.log('Demo credentials: demo@example.com / password123');
+// Filter handlers
+filters.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filters.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filter = btn.dataset.filter;
+    render();
+  });
 });
 
-// Enter key to submit form
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('password').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-        }
-    });
+// Theme toggle
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
 });
+
+addBtn.addEventListener('click', addTask);
+inputEl.addEventListener('keyup', e => {
+  if (e.key === 'Enter') addTask();
+});
+
+// Init
+load();
+render();

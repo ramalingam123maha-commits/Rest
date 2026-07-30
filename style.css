@@ -1,0 +1,122 @@
+/* Root theme variables */
+:root {
+  --bg-color: #f0f0f0;
+  --text-color: #333;
+  --card-bg: #fff;
+  --card-shadow: rgba(0,0,0,0.1);
+  --accent: #6200ea;
+}
+body.dark {
+  --bg-color: #121212;
+  --text-color: #ddd;
+  --card-bg: #1e1e1e;
+  --card-shadow: rgba(0,0,0,0.5);
+  --accent: #bb86fc;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
+.container {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+header h1 {
+  font-size: 1.8rem;
+}
+button {
+  cursor: pointer;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+button:focus {
+  outline: 2px solid var(--text-color);
+}
+.card {
+  background: var(--card-bg);
+  box-shadow: 0 2px 5px var(--card-shadow);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.new-task {
+  display: flex;
+}
+.new-task input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+}
+.new-task button {
+  border-radius: 0 4px 4px 0;
+}
+.filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.filter-btn {
+  background: none;
+  color: var(--text-color);
+  padding: 0.4rem 0.8rem;
+  margin-right: 0.5rem;
+  border-radius: 4px;
+}
+.filter-btn.active,
+.filter-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+#task-list {
+  list-style: none;
+}
+.task-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  box-shadow: 0 1px 3px var(--card-shadow);
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+}
+.task-card.dragging {
+  opacity: 0.5;
+}
+.task-card span {
+  flex: 1;
+  margin: 0 0.5rem;
+  word-break: break-word;
+}
+.task-card.completed span {
+  text-decoration: line-through;
+  color: #777;
+}
+.task-card button.delete {
+  background: transparent;
+  color: #e53935;
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+.task-card button.delete:hover {
+  color: #b71c1c;
+}
