@@ -1,100 +1,478 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Rest API</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduTrack - Student Management Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-box">
-            <h1>Welcome Back</h1>
-            <p class="subtitle">Sign in to your account</p>
-            
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        placeholder="you@example.com" 
-                        required
-                    >
-                </div>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">🎓</div>
+        <div class="brand-text">
+          <h2>EduTrack</h2>
+          <span>Admin Portal</span>
+        </div>
+      </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="password-input-group">
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            placeholder="Enter your password" 
-                            required
-                        >
-                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
-                            <span class="eye-icon">👁️</span>
-                        </button>
-                    </div>
-                </div>
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="dashboard">
+          <span class="icon">📊</span>
+          <span>Overview</span>
+        </button>
+        <button class="nav-item" data-tab="students">
+          <span class="icon">👨‍🎓</span>
+          <span>Student Directory</span>
+        </button>
+        <button class="nav-item" data-tab="enrollments">
+          <span class="icon">📚</span>
+          <span>Enrollments</span>
+        </button>
+        <button class="nav-item" data-tab="grades">
+          <span class="icon">📈</span>
+          <span>Academic Progress</span>
+        </button>
+        <button class="nav-item" data-tab="reports">
+          <span class="icon">📄</span>
+          <span>Performance Reports</span>
+        </button>
+      </nav>
 
-                <div class="form-options">
-                    <label class="remember-me">
-                        <input type="checkbox" name="remember" id="remember">
-                        <span>Remember me</span>
-                    </label>
-                    <a href="#" class="forgot-password">Forgot Password?</a>
-                </div>
+      <div class="sidebar-footer">
+        <div class="admin-badge">
+          <div class="avatar">AD</div>
+          <div class="meta">
+            <strong>Administrator</strong>
+            <small>admin@edutrack.edu</small>
+          </div>
+        </div>
+      </div>
+    </aside>
 
-                <button type="submit" class="login-btn">Sign In</button>
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="header-title">
+          <h1 id="pageTitle">Dashboard Overview</h1>
+          <p id="pageSubtitle">Real-time academic telemetry and student administration</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="globalSearch" placeholder="Search students, roll no, course...">
+          </div>
+          <button class="btn btn-primary" onclick="openStudentModal()">
+            <span>+</span> Register Student
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB: DASHBOARD OVERVIEW -->
+      <section id="tab-dashboard" class="tab-panel active">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon bg-blue">👥</div>
+            <div class="stat-info">
+              <span class="stat-label">Total Students</span>
+              <h3 id="statTotalStudents">0</h3>
+              <span class="stat-trend positive">Active in system</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-purple">📖</div>
+            <div class="stat-info">
+              <span class="stat-label">Active Courses</span>
+              <h3 id="statTotalCourses">0</h3>
+              <span class="stat-trend">Departments covered</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-green">🎯</div>
+            <div class="stat-info">
+              <span class="stat-label">Average GPA</span>
+              <h3 id="statAverageGPA">0.00</h3>
+              <span class="stat-trend positive">Campus aggregate</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-amber">📝</div>
+            <div class="stat-info">
+              <span class="stat-label">Course Enrollments</span>
+              <h3 id="statTotalEnrollments">0</h3>
+              <span class="stat-trend">Current term</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Charts & Summaries -->
+        <div class="grid-2col">
+          <div class="card">
+            <div class="card-header">
+              <h3>Academic Performance Distribution</h3>
+              <span class="badge">GPA Brackets</span>
+            </div>
+            <div class="card-body">
+              <div id="gpaDistribution" class="distribution-bars"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Department Breakdown</h3>
+              <span class="badge">Enrollment Share</span>
+            </div>
+            <div class="card-body">
+              <div id="deptDistribution" class="dept-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Registrations -->
+        <div class="card mt-24">
+          <div class="card-header">
+            <h3>Recent Student Registrations</h3>
+            <button class="btn btn-sm btn-outline" onclick="switchTab('students')">View All</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Roll No</th>
+                  <th>Student Name</th>
+                  <th>Department</th>
+                  <th>Year</th>
+                  <th>Status</th>
+                  <th>GPA</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="recentStudentsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: STUDENT DIRECTORY -->
+      <section id="tab-students" class="tab-panel">
+        <div class="card">
+          <div class="card-header flex-wrap">
+            <div>
+              <h3>Student Registry</h3>
+              <p class="text-muted">Manage records, contact details, and academic status</p>
+            </div>
+            <div class="filter-group">
+              <select id="filterDept" onchange="renderStudentsTable()">
+                <option value="">All Departments</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Electrical Engineering">Electrical Engineering</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Business Administration">Business Administration</option>
+                <option value="Data Science">Data Science</option>
+              </select>
+              <select id="filterStatus" onchange="renderStudentsTable()">
+                <option value="">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Probation">Probation</option>
+                <option value="Graduated">Graduated</option>
+              </select>
+              <button class="btn btn-primary" onclick="openStudentModal()">+ Register Student</button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Roll No</th>
+                  <th>Name & Email</th>
+                  <th>Department</th>
+                  <th>Year</th>
+                  <th>CGPA</th>
+                  <th>Status</th>
+                  <th>Enrolled In</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="studentsFullTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: ENROLLMENTS -->
+      <section id="tab-enrollments" class="tab-panel">
+        <div class="grid-2col mb-24">
+          <div class="card">
+            <div class="card-header">
+              <h3>Enroll Student into Course</h3>
+            </div>
+            <form id="enrollmentForm" onsubmit="handleEnrollStudent(event)" class="form-vertical card-body">
+              <div class="form-group">
+                <label for="enrollStudentSelect">Select Student *</label>
+                <select id="enrollStudentSelect" required></select>
+              </div>
+              <div class="form-group">
+                <label for="enrollCourseSelect">Select Course *</label>
+                <select id="enrollCourseSelect" required></select>
+              </div>
+              <div class="form-group">
+                <label for="enrollSemester">Semester / Term *</label>
+                <select id="enrollSemester" required>
+                  <option value="Fall 2024">Fall 2024</option>
+                  <option value="Spring 2025">Spring 2025</option>
+                  <option value="Summer 2025">Summer 2025</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit Enrollment</button>
             </form>
+          </div>
 
-            <div class="divider">
-                <span>or</span>
+          <div class="card">
+            <div class="card-header">
+              <h3>Course Capacity & Offerings</h3>
             </div>
-
-            <div class="social-login">
-                <button class="social-btn google-btn" onclick="handleSocialLogin('google')">
-                    <span class="icon">G</span>
-                    Google
-                </button>
-                <button class="social-btn github-btn" onclick="handleSocialLogin('github')">
-                    <span class="icon">⚡</span>
-                    GitHub
-                </button>
+            <div class="card-body">
+              <div id="courseCatalogList" class="course-cards"></div>
             </div>
-
-            <p class="signup-link">
-                Don't have an account? <a href="#signup">Sign up here</a>
-            </p>
+          </div>
         </div>
 
-        <div class="login-side">
-            <div class="side-content">
-                <h2>REST API Portal</h2>
-                <p>Secure access to your REST API endpoints and resources</p>
-                <ul class="features">
-                    <li>✓ Fast & Reliable</li>
-                    <li>✓ Highly Secure</li>
-                    <li>✓ Easy Integration</li>
-                    <li>✓ 24/7 Support</li>
-                </ul>
-            </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Active Course Enrollments</h3>
+            <span class="badge" id="enrollmentCountBadge">0 records</span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Enrollment ID</th>
+                  <th>Student Name</th>
+                  <th>Course Code & Title</th>
+                  <th>Credits</th>
+                  <th>Semester</th>
+                  <th>Grade</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="enrollmentsTable"></tbody>
+            </table>
+          </div>
         </div>
-    </div>
+      </section>
 
-    <div id="successMessage" class="message success-message" style="display: none;">
-        <span class="close" onclick="closeMessage()">&times;</span>
-        <p id="successText"></p>
-    </div>
+      <!-- TAB: ACADEMIC PROGRESS & GRADING -->
+      <section id="tab-grades" class="tab-panel">
+        <div class="card mb-24">
+          <div class="card-header">
+            <h3>Record / Update Student Grades</h3>
+          </div>
+          <div class="card-body">
+            <form id="gradeForm" onsubmit="handleRecordGrade(event)" class="grid-3col">
+              <div class="form-group">
+                <label for="gradeEnrollmentSelect">Student Course Record *</label>
+                <select id="gradeEnrollmentSelect" required></select>
+              </div>
+              <div class="form-group">
+                <label for="gradeLetterSelect">Assigned Grade *</label>
+                <select id="gradeLetterSelect" required>
+                  <option value="A+">A+ (4.0 - Exceptional)</option>
+                  <option value="A">A (3.8 - Excellent)</option>
+                  <option value="B+">B+ (3.3 - Very Good)</option>
+                  <option value="B">B (3.0 - Good)</option>
+                  <option value="C+">C+ (2.5 - Satisfactory)</option>
+                  <option value="C">C (2.0 - Pass)</option>
+                  <option value="F">F (0.0 - Fail)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="gradeAttendance">Attendance Rate (%)</label>
+                <input type="number" id="gradeAttendance" min="0" max="100" value="92" required>
+              </div>
+              <div class="grid-col-span-3">
+                <button type="submit" class="btn btn-primary">Update Grade & Recalculate CGPA</button>
+              </div>
+            </form>
+          </div>
+        </div>
 
-    <div id="errorMessage" class="message error-message" style="display: none;">
-        <span class="close" onclick="closeMessage()">&times;</span>
-        <p id="errorText"></p>
-    </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Academic Standing Ledger</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Total Credits</th>
+                  <th>Completed Courses</th>
+                  <th>Current CGPA</th>
+                  <th>Academic Standing</th>
+                  <th>Attendance Avg</th>
+                  <th>Progress Bar</th>
+                </tr>
+              </thead>
+              <tbody id="academicStandingTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-    <script src="script.js"></script>
+      <!-- TAB: PERFORMANCE REPORTS -->
+      <section id="tab-reports" class="tab-panel">
+        <div class="card mb-24">
+          <div class="card-header flex-wrap">
+            <div>
+              <h3>Institutional Performance Report Generator</h3>
+              <p class="text-muted">Export student transcripts, class ranks, and departmental audits</p>
+            </div>
+            <div class="report-actions">
+              <button class="btn btn-outline" onclick="printReport()">🖨️ Print Transcript</button>
+              <button class="btn btn-secondary" onclick="exportDataJSON()">💾 Export JSON</button>
+              <button class="btn btn-primary" onclick="exportCSV()">📊 Export CSV</button>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="report-selector">
+              <label>Select Student for Detailed Transcript:</label>
+              <select id="reportStudentSelect" onchange="renderStudentReport()"></select>
+            </div>
+
+            <div id="printableReport" class="report-sheet">
+              <div class="report-header">
+                <div class="report-logo">
+                  <h2>EDUTRACK ACADEMY OF TECHNOLOGY</h2>
+                  <p>Office of Academic Records & Registrar</p>
+                </div>
+                <div class="report-meta" id="reportDateStamp"></div>
+              </div>
+
+              <div id="reportStudentDetails" class="report-bio-grid"></div>
+
+              <h4 class="mt-20">Coursework & Term Performance</h4>
+              <table class="report-table">
+                <thead>
+                  <tr>
+                    <th>Course Code</th>
+                    <th>Course Title</th>
+                    <th>Credits</th>
+                    <th>Semester</th>
+                    <th>Grade</th>
+                    <th>Points</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="reportCourseworkBody"></tbody>
+              </table>
+
+              <div class="report-summary-box" id="reportSummaryBox"></div>
+
+              <div class="report-footer">
+                <div class="signature-line">
+                  <div class="line"></div>
+                  <span>Dean of Academic Affairs</span>
+                </div>
+                <div class="signature-line">
+                  <div class="line"></div>
+                  <span>Office of the Registrar</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: REGISTER / EDIT STUDENT -->
+  <div id="studentModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Register New Student</h3>
+        <button class="modal-close" onclick="closeStudentModal()">✕</button>
+      </div>
+      <form id="studentForm" onsubmit="handleSaveStudent(event)">
+        <input type="hidden" id="studentId">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentName">Full Name *</label>
+              <input type="text" id="studentName" required placeholder="e.g. Alex Morgan">
+            </div>
+            <div class="form-group">
+              <label for="studentEmail">Email Address *</label>
+              <input type="email" id="studentEmail" required placeholder="alex@campus.edu">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentRoll">Roll / Reg Number *</label>
+              <input type="text" id="studentRoll" required placeholder="STU-2024-001">
+            </div>
+            <div class="form-group">
+              <label for="studentPhone">Phone Number</label>
+              <input type="text" id="studentPhone" placeholder="+1 (555) 019-2834">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentDept">Department *</label>
+              <select id="studentDept" required>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Electrical Engineering">Electrical Engineering</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Business Administration">Business Administration</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="studentYear">Academic Year *</label>
+              <select id="studentYear" required>
+                <option value="1st Year">1st Year (Freshman)</option>
+                <option value="2nd Year">2nd Year (Sophomore)</option>
+                <option value="3rd Year">3rd Year (Junior)</option>
+                <option value="4th Year">4th Year (Senior)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentStatus">Enrollment Status</label>
+              <select id="studentStatus">
+                <option value="Active">Active</option>
+                <option value="Probation">Probation</option>
+                <option value="Graduated">Graduated</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="studentAdmissionDate">Admission Date</label>
+              <input type="date" id="studentAdmissionDate">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeStudentModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="studentSubmitBtn">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
