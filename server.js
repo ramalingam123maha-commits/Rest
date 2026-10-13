@@ -212,6 +212,15 @@ app.get('/api/courses', (req, res) => {
   });
 });
 
+// Delete course
+app.delete('/api/courses/:id', (req, res) => {
+  const { id } = req.params;
+  db.run('DELETE FROM courses WHERE id = ?', [id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Course deleted successfully' });
+  });
+});
+
 // ============ ENROLLMENT ENDPOINTS ============
 
 // Enroll student in course
@@ -274,6 +283,15 @@ app.put('/api/enrollments/:id', (req, res) => {
       res.json({ message: 'Enrollment updated successfully' });
     }
   );
+});
+
+// Delete enrollment
+app.delete('/api/enrollments/:id', (req, res) => {
+  const { id } = req.params;
+  db.run('DELETE FROM enrollments WHERE id = ?', [id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Enrollment deleted successfully' });
+  });
 });
 
 // ============ GRADES ENDPOINTS ============
