@@ -1,0 +1,31 @@
+{
+  "name": "student-management-dashboard",
+  "version": "1.0.0",
+  "description": "Student Management Dashboard - Register, track progress, manage enrollments, generate reports",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "jest --coverage"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2",
+    "uuid": "^9.0.0",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0"
+  },
+  "keywords": [
+    "student",
+    "management",
+    "dashboard",
+    "enrollment",
+    "academic"
+  ],
+  "author": "",
+  "license": "MIT"
+}

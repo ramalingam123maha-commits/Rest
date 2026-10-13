@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Management Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>📚 Student Management Dashboard</h1>
+      <nav class="nav">
+        <button class="nav-btn active" onclick="showTab('students')">Students</button>
+        <button class="nav-btn" onclick="showTab('courses')">Courses</button>
+        <button class="nav-btn" onclick="showTab('enrollments')">Enrollments</button>
+        <button class="nav-btn" onclick="showTab('grades')">Grades</button>
+        <button class="nav-btn" onclick="showTab('reports')">Reports</button>
+      </nav>
+    </header>
+
+    <!-- Students Tab -->
+    <section id="students-tab" class="tab-content active">
+      <h2>Student Registration & Management</h2>
+      <div class="form-section">
+        <h3>Register New Student</h3>
+        <form id="studentForm" class="form-grid">
+          <input type="text" id="studentName" placeholder="Full Name" required>
+          <input type="email" id="studentEmail" placeholder="Email" required>
+          <input type="tel" id="studentPhone" placeholder="Phone Number">
+          <input type="date" id="studentDOB" placeholder="Date of Birth">
+          <input type="text" id="studentAddress" placeholder="Address">
+          <input type="text" id="parentName" placeholder="Parent/Guardian Name">
+          <input type="email" id="parentEmail" placeholder="Parent/Guardian Email">
+          <button type="submit" class="btn-primary">Register Student</button>
+        </form>
+      </div>
+
+      <div class="students-list">
+        <h3>Registered Students</h3>
+        <div id="studentsList" class="list-container">
+          <p>Loading students...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Courses Tab -->
+    <section id="courses-tab" class="tab-content">
+      <h2>Course Management</h2>
+      <div class="form-section">
+        <h3>Create New Course</h3>
+        <form id="courseForm" class="form-grid">
+          <input type="text" id="courseName" placeholder="Course Name" required>
+          <input type="text" id="courseCode" placeholder="Course Code" required>
+          <input type="text" id="instructor" placeholder="Instructor Name" required>
+          <input type="number" id="credits" placeholder="Credits" min="1" max="6">
+          <input type="text" id="semester" placeholder="Semester (e.g., Fall 2024)">
+          <input type="number" id="maxStudents" placeholder="Max Students" min="1">
+          <textarea id="description" placeholder="Course Description" rows="2"></textarea>
+          <button type="submit" class="btn-primary">Create Course</button>
+        </form>
+      </div>
+
+      <div class="courses-list">
+        <h3>Available Courses</h3>
+        <div id="coursesList" class="list-container">
+          <p>Loading courses...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enrollments Tab -->
+    <section id="enrollments-tab" class="tab-content">
+      <h2>Enrollment Management</h2>
+      <div class="form-section">
+        <h3>Enroll Student in Course</h3>
+        <form id="enrollmentForm" class="form-grid">
+          <select id="enrollmentStudent" required>
+            <option value="">Select Student</option>
+          </select>
+          <select id="enrollmentCourse" required>
+            <option value="">Select Course</option>
+          </select>
+          <button type="submit" class="btn-primary">Enroll Student</button>
+        </form>
+      </div>
+
+      <div class="enrollments-list">
+        <h3>View Student Enrollments</h3>
+        <select id="filterStudent" onchange="loadStudentEnrollments()">
+          <option value="">Select a student to view enrollments</option>
+        </select>
+        <div id="enrollmentsList" class="list-container">
+          <p>Select a student to view enrollments</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grades Tab -->
+    <section id="grades-tab" class="tab-content">
+      <h2>Grade Management</h2>
+      <div class="form-section">
+        <h3>Record Grade</h3>
+        <form id="gradeForm" class="form-grid">
+          <select id="gradeStudent" required>
+            <option value="">Select Student</option>
+          </select>
+          <select id="gradeCourse" required>
+            <option value="">Select Course</option>
+          </select>
+          <input type="text" id="assignment" placeholder="Assignment/Assessment Name">
+          <input type="number" id="score" placeholder="Score" step="0.01" required>
+          <input type="number" id="maxScore" placeholder="Max Score" step="0.01" value="100">
+          <input type="number" id="weight" placeholder="Weight (optional)" step="0.01" value="1">
+          <button type="submit" class="btn-primary">Record Grade</button>
+        </form>
+      </div>
+
+      <div class="grades-list">
+        <h3>View Student Grades</h3>
+        <select id="filterStudentGrades" onchange="loadStudentGrades()">
+          <option value="">Select a student to view grades</option>
+        </select>
+        <div id="gradesList" class="list-container">
+          <p>Select a student to view grades</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reports Tab -->
+    <section id="reports-tab" class="tab-content">
+      <h2>Performance Reports</h2>
+      
+      <div class="reports-section">
+        <h3>Student Performance Report</h3>
+        <div class="form-section">
+          <select id="reportStudent" required>
+            <option value="">Select Student</option>
+          </select>
+          <button onclick="generateStudentReport()" class="btn-primary">Generate Report</button>
+        </div>
+        <div id="studentReport" class="report-container"></div>
+      </div>
+
+      <div class="reports-section">
+        <h3>Class Performance Report</h3>
+        <div class="form-section">
+          <select id="reportCourse" required>
+            <option value="">Select Course</option>
+          </select>
+          <button onclick="generateClassReport()" class="btn-primary">Generate Report</button>
+        </div>
+        <div id="classReport" class="report-container"></div>
+      </div>
+
+      <div class="reports-section">
+        <h3>Institutional Report</h3>
+        <button onclick="generateInstitutionalReport()" class="btn-primary">Generate Report</button>
+        <div id="institutionalReport" class="report-container"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
